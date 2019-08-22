@@ -1,15 +1,22 @@
 use sdl2::pixels::Color;
+use sdl2::rect::Rect;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
-const SCREEN_HEIGHT: u32 = 400;
-const SCREEN_WIDTH: u32 = 400;
+use std::{thread, time};
+
+const SCREEN_HEIGHT: isize = 800;
+const SCREEN_WIDTH: isize  = 800;
+
+mod star;
+
+pub use self::star::Star;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
-    let window = video_subsystem.window("Starfield", SCREEN_WIDTH, SCREEN_HEIGHT)
+    let window = video_subsystem.window("Starfield", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
         .position_centered()
         .opengl()
         .build()
@@ -18,9 +25,15 @@ fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
+    canvas.set_viewport(Rect::new(-SCREEN_WIDTH as i32, -SCREEN_HEIGHT as i32, SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32));
     canvas.set_draw_color(Color::RGB(0, 0, 0));
     canvas.clear();
     canvas.present();
+
+    let mut stars = Vec::new();
+    for _i in 0 .. 100 {
+        stars.push(Star::new(SCREEN_HEIGHT as usize, SCREEN_WIDTH as usize));
+    }
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -32,5 +45,19 @@ fn main() {
                 _ => {}
             }
         }
+
+        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.clear();
+        canvas.present();
+
+        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        for star in stars.iter_mut() {
+            let pos = star.update();
+            let _ = canvas.fill_rect(Rect::new(pos.0 as i32, pos.1 as i32, star.get_radius() as u32, star.get_radius() as u32));
+        }
+
+        canvas.present();
+
+        thread::sleep(time::Duration::from_millis(10));
     }
 }

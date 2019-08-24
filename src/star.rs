@@ -1,12 +1,12 @@
 use rand::Rng;
 
 pub struct Star {
-    x: usize,
-    y: usize,
-    z: usize,
+    x: f64,
+    y: f64,
+    z: f64,
     r: usize,
-    max_x: usize,
-    max_y: usize,
+    max_x: f64,
+    max_y: f64,
 }
 
 fn map_range(from_range: (f64, f64), to_range: (f64, f64), s: f64) -> f64 {
@@ -17,20 +17,13 @@ impl Star {
     pub fn new(height: usize, width: usize) -> Self {
         let mut rng = rand::thread_rng();
         Star {
-            x: rng.gen_range(0, width),
-            y: rng.gen_range(0, height),
-            z: rng.gen_range(0, width),
+            x: rng.gen_range(0, width) as f64,
+            y: rng.gen_range(0, height) as f64,
+            z: width as f64,
             r: 1,
-            max_x: width,
-            max_y: height
+            max_x: width as f64,
+            max_y: height as f64
         }
-    }
-
-    fn init(&mut self) {
-        let mut rng = rand::thread_rng();
-        self.x = rng.gen_range(1, self.max_x);
-        self.y = rng.gen_range(1, self.max_y);
-        self.z = rng.gen_range(1, self.max_x);
     }
 
     pub fn get_radius(&self) -> usize {
@@ -39,15 +32,19 @@ impl Star {
 
     pub fn update(&mut self) -> (usize, usize) {
         let mut rng = rand::thread_rng();
+        self.z -= 1.0;
 
-        self.z -= 1;
-        if self.z < 1 {
-            self.z = rng.gen_range(0, self.max_x)
+        let pz = 1.0 - map_range((0.0, self.max_x), (0.95, 0.995), self.z);
+
+        if self.x > self.max_x || self.y > self.max_y || self.x < 0.0 || self.y < 0.0 {
+            self.x = rng.gen_range(0, self.max_x as usize) as f64;
+            self.y = rng.gen_range(0, self.max_y as usize) as f64;
+            self.z = self.max_x;
         }
 
-        let sx = map_range((0 as f64, 1 as f64), (0 as f64, self.max_x as f64), self.x as f64 / self.z as f64);
-        let sy = map_range((0 as f64, 1 as f64), (0 as f64, self.max_y as f64), self.y as f64 / self.z as f64);
+        self.x = (self.x - self.max_x / 2.0) * (1.0 + pz) + self.max_x / 2.0;
+        self.y = (self.y - self.max_y / 2.0) * (1.0 + pz) + self.max_y / 2.0;
 
-        (sx as usize, sy as usize)
+        (self.x as usize, self.y as usize)
     }
 }

@@ -30,7 +30,7 @@ fn main() {
     canvas.present();
 
     let mut stars = Vec::new();
-    for _i in 0 .. 100 {
+    for _i in 0 .. 500 {
         stars.push(Star::new(SCREEN_HEIGHT as usize, SCREEN_WIDTH as usize));
     }
 

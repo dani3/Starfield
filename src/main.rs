@@ -57,6 +57,6 @@ fn main() {
 
         canvas.present();
 
-        thread::sleep(time::Duration::from_millis(5));
+        thread::sleep(time::Duration::from_millis(10));
     }
 }

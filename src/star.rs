@@ -1,8 +1,8 @@
 use rand::Rng;
 
 const MAX_BRIGHTNESS : u8 = 255;
-const MAX_RADIUS     : u8 = 3;
-const Z_STEP         : f64 = 3.0;
+const MAX_RADIUS     : u8 = 2;
+const Z_STEP         : f64 = 5.0;
 
 pub struct Star {
     x: f64,
@@ -41,7 +41,7 @@ impl Star {
             self.z = self.max_x;
         }
 
-        let pz = map_range((0.0, self.max_x), (1.01, 1.005), self.z);
+        let pz = map_range((0.0, self.max_x), (1.02, 1.01), self.z);
         let brightness =
             MAX_BRIGHTNESS - map_range((0.0, self.max_x), (0.0, MAX_BRIGHTNESS as f64), self.z) as u8;
         let radius =

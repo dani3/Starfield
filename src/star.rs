@@ -4,7 +4,6 @@ pub struct Star {
     x: f64,
     y: f64,
     z: f64,
-    r: usize,
     max_x: f64,
     max_y: f64,
 }
@@ -20,31 +19,28 @@ impl Star {
             x: rng.gen_range(0, width) as f64,
             y: rng.gen_range(0, height) as f64,
             z: width as f64,
-            r: 1,
             max_x: width as f64,
             max_y: height as f64
         }
     }
 
-    pub fn get_radius(&self) -> usize {
-        self.r
-    }
-
-    pub fn update(&mut self) -> (usize, usize) {
+    pub fn update(&mut self) -> (usize, usize, u8, u8) {
         let mut rng = rand::thread_rng();
         self.z -= 1.0;
 
-        let pz = 1.0 - map_range((0.0, self.max_x), (0.95, 0.995), self.z);
-
-        if self.x > self.max_x || self.y > self.max_y || self.x < 0.0 || self.y < 0.0 {
+        if self.x >= self.max_x || self.y >= self.max_y || self.x <= 0.0 || self.y <= 0.0 {
             self.x = rng.gen_range(0, self.max_x as usize) as f64;
             self.y = rng.gen_range(0, self.max_y as usize) as f64;
             self.z = self.max_x;
         }
 
-        self.x = (self.x - self.max_x / 2.0) * (1.0 + pz) + self.max_x / 2.0;
-        self.y = (self.y - self.max_y / 2.0) * (1.0 + pz) + self.max_y / 2.0;
+        let pz = map_range((0.0, self.max_x), (1.1, 1.005), self.z);
+        let brightness = 255 - map_range((0.0, self.max_x / 1.8), (0.0, 255.0), self.z) as u8;
+        let radius = 16 - map_range((0.0, self.max_x), (0.0, 16.0), self.z) as u8;
 
-        (self.x as usize, self.y as usize)
+        self.x = (self.x - self.max_x / 2.0) * pz + self.max_x / 2.0;
+        self.y = (self.y - self.max_y / 2.0) * pz + self.max_y / 2.0;
+
+        (self.x as usize, self.y as usize, brightness, radius)
     }
 }

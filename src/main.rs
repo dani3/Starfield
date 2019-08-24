@@ -5,8 +5,8 @@ use sdl2::keyboard::Keycode;
 
 use std::{thread, time};
 
+const SCREEN_WIDTH: isize  = 1400;
 const SCREEN_HEIGHT: isize = 800;
-const SCREEN_WIDTH: isize  = 800;
 
 mod star;
 
@@ -49,10 +49,10 @@ fn main() {
         canvas.clear();
         canvas.present();
 
-        canvas.set_draw_color(Color::RGB(255, 255, 255));
         for star in stars.iter_mut() {
             let pos = star.update();
-            let _ = canvas.fill_rect(Rect::new(pos.0 as i32, pos.1 as i32, star.get_radius() as u32, star.get_radius() as u32));
+            canvas.set_draw_color(Color::RGB(pos.2, pos.2, pos.2));
+            let _ = canvas.fill_rect(Rect::new(pos.0 as i32, pos.1 as i32, pos.3 as u32, pos.3 as u32));
         }
 
         canvas.present();

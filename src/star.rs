@@ -1,7 +1,6 @@
 use rand::Rng;
 
 const MAX_BRIGHTNESS : u8 = 255;
-const MAX_RADIUS     : u8 = 2;
 
 pub struct Star {
     x: f64,
@@ -27,7 +26,7 @@ impl Star {
         }
     }
 
-    pub fn update(&mut self, pos: i32) -> (usize, usize, u8, u8) {
+    pub fn update(&mut self, pos: i32) -> (usize, usize, usize, usize, u8) {
         let mut rng = rand::thread_rng();
 
         let step = map_range((0.0, self.max_x), (0.0, 40.0), pos as f64);
@@ -46,14 +45,14 @@ impl Star {
         }
 
         let pz = map_range((0.0, self.max_x), (max_speed, min_speed), self.z);
-        let brightness =
-            MAX_BRIGHTNESS - map_range((0.0, self.max_x), (0.0, MAX_BRIGHTNESS as f64), self.z) as u8;
-        let radius =
-            MAX_RADIUS - map_range((0.0, self.max_x), (0.0, MAX_RADIUS as f64), self.z) as u8;
+        let brightness = MAX_BRIGHTNESS - map_range((0.0, self.max_x), (0.0, MAX_BRIGHTNESS as f64), self.z) as u8;
+
+        let px = self.x;
+        let py = self.y;
 
         self.x = (self.x - self.max_x / 2.0) * pz + self.max_x / 2.0;
         self.y = (self.y - self.max_y / 2.0) * pz + self.max_y / 2.0;
 
-        (self.x as usize, self.y as usize, brightness, radius)
+        (self.x as usize, self.y as usize, px as usize, py as usize, brightness)
     }
 }

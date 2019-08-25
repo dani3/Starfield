@@ -45,12 +45,14 @@ fn main() {
             }
         }
 
+        let cursor = sdl2::mouse::MouseState::new(&event_pump);
+
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
         canvas.present();
 
         for star in stars.iter_mut() {
-            let pos = star.update();
+            let pos = star.update(cursor.x());
             canvas.set_draw_color(Color::RGB(pos.2, pos.2, pos.2));
             let _ = canvas.fill_rect(Rect::new(pos.0 as i32, pos.1 as i32, pos.3 as u32, pos.3 as u32));
         }

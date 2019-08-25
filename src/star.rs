@@ -1,8 +1,6 @@
 use rand::Rng;
 
 const MAX_BRIGHTNESS : u8 = 255;
-const MAX_RADIUS     : u8 = 2;
-const Z_STEP         : f64 = 5.0;
 
 pub struct Star {
     x: f64,
@@ -28,12 +26,17 @@ impl Star {
         }
     }
 
-    pub fn update(&mut self) -> (usize, usize, u8, u8) {
+    pub fn update(&mut self, pos: i32) -> (usize, usize, usize, usize, u8) {
         let mut rng = rand::thread_rng();
 
-        if self.z >= Z_STEP {
-            self.z -= Z_STEP;
+        let step = map_range((0.0, self.max_x), (0.0, 40.0), pos as f64);
+
+        if self.z >= step {
+            self.z -= step;
         }
+
+        let min_speed = map_range((0.0, self.max_x), (1.0, 1.04), pos as f64);
+        let max_speed = map_range((0.0, self.max_x), (1.0, 1.08), pos as f64);
 
         if self.x >= self.max_x || self.y >= self.max_y || self.x <= 0.0 || self.y <= 0.0 {
             self.x = rng.gen_range(0, self.max_x as usize) as f64;
@@ -41,15 +44,15 @@ impl Star {
             self.z = self.max_x;
         }
 
-        let pz = map_range((0.0, self.max_x), (1.02, 1.01), self.z);
-        let brightness =
-            MAX_BRIGHTNESS - map_range((0.0, self.max_x), (0.0, MAX_BRIGHTNESS as f64), self.z) as u8;
-        let radius =
-            MAX_RADIUS - map_range((0.0, self.max_x), (0.0, MAX_RADIUS as f64), self.z) as u8;
+        let pz = map_range((0.0, self.max_x), (max_speed, min_speed), self.z);
+        let brightness = MAX_BRIGHTNESS - map_range((0.0, self.max_x), (0.0, MAX_BRIGHTNESS as f64), self.z) as u8;
+
+        let px = self.x;
+        let py = self.y;
 
         self.x = (self.x - self.max_x / 2.0) * pz + self.max_x / 2.0;
         self.y = (self.y - self.max_y / 2.0) * pz + self.max_y / 2.0;
 
-        (self.x as usize, self.y as usize, brightness, radius)
+        (self.x as usize, self.y as usize, px as usize, py as usize, brightness)
     }
 }

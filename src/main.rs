@@ -1,7 +1,7 @@
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::rect::Point;
 
 use std::{thread, time};
 
@@ -25,7 +25,6 @@ fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    canvas.set_draw_color(Color::RGB(0, 0, 0));
     canvas.clear();
     canvas.present();
 
@@ -45,14 +44,16 @@ fn main() {
             }
         }
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
+        let cursor = sdl2::mouse::MouseState::new(&event_pump);
+
+        canvas.set_draw_color(Color::RGB(14, 9, 34));
         canvas.present();
+        canvas.clear();
 
         for star in stars.iter_mut() {
-            let pos = star.update();
-            canvas.set_draw_color(Color::RGB(pos.2, pos.2, pos.2));
-            let _ = canvas.fill_rect(Rect::new(pos.0 as i32, pos.1 as i32, pos.3 as u32, pos.3 as u32));
+            let pos = star.update(cursor.x());
+            canvas.set_draw_color(Color::RGB(pos.4, pos.4, pos.4));
+            let _ = canvas.draw_line(Point::new(pos.0 as i32, pos.1 as i32), Point::new(pos.2 as i32, pos.3 as i32));
         }
 
         canvas.present();
